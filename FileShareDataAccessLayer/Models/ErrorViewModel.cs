@@ -1,4 +1,4 @@
-namespace FileShare.Models
+namespace FileShareDataAccessLayer.Models
 {
     public class ErrorViewModel
     {

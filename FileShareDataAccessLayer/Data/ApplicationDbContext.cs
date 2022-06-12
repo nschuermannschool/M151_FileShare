@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace FileShare.Data
+namespace FileShareDataAccessLayer.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
