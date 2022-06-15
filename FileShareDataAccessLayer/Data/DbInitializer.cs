@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FileShareDataAccessLayer.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace FileShareDataAccessLayer.Data
     }
     public class DbInitializer
     {
-        public static async Task Seed(ApplicationDbContext context, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) 
+        public static async Task Seed(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager) 
         {
             context.Database.EnsureCreated();
 
@@ -30,13 +31,13 @@ namespace FileShareDataAccessLayer.Data
             #region Add local users to DB
             if (!context.Users.Any(u => u.UserName == "test@test.com"))
             {
-                IdentityUser user = new IdentityUser { Email = "test@test.com", UserName = "test@test.com" };
+                ApplicationUser user = new ApplicationUser { Email = "test@test.com", UserName = "test@test.com" };
                 await userManager.CreateAsync(user, "123456");
             }
 
             if (!context.Users.Any(u => u.UserName == "admin@test.com"))
             {
-                IdentityUser user = new IdentityUser { Email = "admin@test.com", UserName = "admin@test.com" };
+                ApplicationUser user = new ApplicationUser { Email = "admin@test.com", UserName = "admin@test.com" };
                 await userManager.CreateAsync(user, "123456");
             }
             #endregion
@@ -44,8 +45,8 @@ namespace FileShareDataAccessLayer.Data
             context.SaveChanges();
 
             #region Add roles to users
-            IdentityUser adminUser = context.Users.SingleOrDefault(u => u.Email == "admin@test.com");
-            IdentityUser testUser = context.Users.SingleOrDefault(u => u.Email == "test@test.com");
+            ApplicationUser adminUser = context.Users.SingleOrDefault(u => u.Email == "admin@test.com");
+            ApplicationUser testUser = context.Users.SingleOrDefault(u => u.Email == "test@test.com");
 
             if (!(await userManager.IsInRoleAsync(adminUser, Roles.Administrator.ToString())))
             {
