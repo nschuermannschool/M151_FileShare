@@ -1,8 +1,24 @@
-﻿@{
+﻿@using FileShare.ViewModels
+@model FileViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="container-fluid">
+        <div class="row">
+            <form asp-controller="Home" asp-action="Index" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label asp-for="File">Upload File: </label>
+                    <input asp-for="File" type="file" class="form-control-file" />
+                </div>
+                <input class="btn btn-primary" type="submit" value="Upload File" style="margin-top: 1em"/>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <p>Please log in and look at the Navigation Bar.</p>
+}

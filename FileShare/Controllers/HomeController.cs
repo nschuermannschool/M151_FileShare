@@ -1,4 +1,5 @@
-﻿using FileShareDataAccessLayer.Models;
+﻿using FileShare.ViewModels;
+using FileShareDataAccessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -15,6 +16,13 @@ namespace FileShare.Controllers
 
         public IActionResult Index()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Index(FileViewModel file)
+        {
+            var singleFile = file.File.Files[0];
             return View();
         }
 
