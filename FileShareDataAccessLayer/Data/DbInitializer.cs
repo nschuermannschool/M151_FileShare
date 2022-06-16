@@ -56,6 +56,16 @@ namespace FileShareDataAccessLayer.Data
 
             context.SaveChanges();
 
+            Models.File file = new Models.File() { FileHash = "TESTHASH", FilePath="PATH", Users = new List<ApplicationUser>() { adminUser } };
+            context.Add(file);
+            
+            context.SaveChanges();
+
+            ApplicationUserFile applicationUserFile = context.ApplicationUserFile.First(x => x.File == file);
+            applicationUserFile.FileName = "Test";
+
+            context.SaveChanges();
+
         }
     }
 }

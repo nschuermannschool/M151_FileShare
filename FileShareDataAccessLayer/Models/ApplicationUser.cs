@@ -9,5 +9,6 @@ namespace FileShareDataAccessLayer.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public ICollection<Models.File> Files { get; set; }
     }
 }
