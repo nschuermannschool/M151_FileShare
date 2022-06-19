@@ -4,7 +4,7 @@ namespace FileShareBusinessLayer.Helper
 {
     public static class Pdkd2Helper
     {
-        public static string CreateHash(string value)
+        public static string CreateHash(byte[] value)
         {
             // Create the salt value with a cryptographic PRNG
             var salt = new byte[16];
@@ -24,8 +24,13 @@ namespace FileShareBusinessLayer.Helper
             return savedPasswordHash;
         }
 
-        public static bool Verify(string value, string savedValue)
+        public static bool Verify(byte[] value, string savedValue)
         {
+            if (savedValue.Length != 64)
+            {
+                return false;
+            }
+
             // Extract the bytes
             var hashBytes = Convert.FromBase64String(savedValue);
 
@@ -34,7 +39,7 @@ namespace FileShareBusinessLayer.Helper
             Array.Copy(hashBytes, 0, salt, 0, 16);
 
             // Compute the hash on the password the user entered
-            var pbkdf2 = new Rfc2898DeriveBytes(value ?? "", salt, 100000);
+            var pbkdf2 = new Rfc2898DeriveBytes(value, salt, 100000);
             var hash = pbkdf2.GetBytes(20);
 
             // Compare the results
