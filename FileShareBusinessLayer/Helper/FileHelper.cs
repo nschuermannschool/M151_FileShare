@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using File = FileShareDataAccessLayer.Models.File;
 using ApplicationUserFile = FileShareDataAccessLayer.Models.ApplicationUserFile;
 using Microsoft.AspNetCore.Hosting;
+using FileShareDataAccessLayer.Models;
 
 namespace FileShareBusinessLayer.Helper
 {
@@ -18,25 +19,48 @@ namespace FileShareBusinessLayer.Helper
 
         public void Save(IFormFile file, string userEmail)
         {
-            var user = _context.Users.First(x => x.Email == userEmail);
+            ApplicationUser user;
 
+            user = _context.Users.First(x => x.Email == userEmail);
+            
             var st = file.OpenReadStream();
             var mst = new MemoryStream();
             st.CopyTo(mst);
 
-            foreach (var fileFromDb in _context.Files)
+            File existingFile = null;
+
+            foreach (var fileFromDb in _context.Files.ToList())
             {
                 if (Pdkd2Helper.Verify(mst.ToArray(), fileFromDb.FileHash))
                 {
-                    fileFromDb.Users.Add(user);
-                    _context.SaveChanges();
-
-                    var userFileFromDb = _context.ApplicationUserFile.First(x => x.UserId == user.Id && x.FileId == fileFromDb.Id);
-                    userFileFromDb.FileName = file.FileName;
-                    _context.SaveChanges();
-
-                    return;
+                    existingFile = fileFromDb;
                 }
+            }
+
+            if (existingFile != null)
+            {
+                var users = new List<ApplicationUser>();
+                foreach (var appUserFile in _context.ApplicationUserFile.ToList())
+                {
+                    if (appUserFile.FileId == existingFile.Id)
+                    {
+                        users.Add(_context.Users.First(x => x.Id == appUserFile.UserId));
+                    }
+                }
+                existingFile.Users = users;
+
+                var adwe = _context.Files.First(x => x.Id == existingFile.Id);
+                adwe.Users.Add(user);
+
+                _context.SaveChanges();
+
+                var userFileFromDb = _context.ApplicationUserFile.First(x => x.UserId == user.Id && x.FileId == existingFile.Id);
+                userFileFromDb.FileName = file.FileName;
+                
+                _context.SaveChanges();
+
+                return;
+
             }
 
             var dbFile = new File
