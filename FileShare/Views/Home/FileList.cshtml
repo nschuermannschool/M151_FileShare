@@ -1,0 +1,21 @@
+﻿@using FileShare.ViewModels
+@model List<FileViewModel>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div class="container-fluid">
+    @if (Model.Any())
+    {
+        foreach (var file in Model)
+        {
+            <div class="row" style="display: block">
+                <a asp-action="DownloadFile" asp-route-id="@file.Id" asp-route-fileName="@file.FileName">@file.FileName</a>
+                <a asp-action="DeleteFile" asp-route-id="@file.Id" onclick="return confirm('Do you really want to delete this file?')"><i class="fa fa-trash-o"></i></a>
+            </div>
+        }
+    }
+    else
+    {
+        <p>You have not uploaded any Files yet.</p>
+    }
+</div>

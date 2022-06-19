@@ -1,0 +1,25 @@
+﻿@using FileShare.ViewModels
+@model FileViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="container-fluid">
+        <div class="row">
+            <form asp-controller="Home" asp-action="Index" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    @Html.AntiForgeryToken()
+                    <label asp-for="File">Upload File: </label>
+                    <input asp-for="File" type="file" class="form-control-file" />
+                </div>
+                <input class="btn btn-primary" type="submit" value="Upload File" style="margin-top: 1em"/>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <p>Please log in to use this Fileshare.</p>
+}
