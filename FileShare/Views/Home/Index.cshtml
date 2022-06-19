@@ -10,6 +10,7 @@
         <div class="row">
             <form asp-controller="Home" asp-action="Index" method="post" enctype="multipart/form-data">
                 <div class="form-group">
+                    @Html.AntiForgeryToken()
                     <label asp-for="File">Upload File: </label>
                     <input asp-for="File" type="file" class="form-control-file" />
                 </div>

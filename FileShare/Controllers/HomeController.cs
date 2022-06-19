@@ -4,6 +4,7 @@ using FileShareDataAccessLayer.Data;
 using FileShareDataAccessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace FileShare.Controllers
 {
@@ -12,10 +13,10 @@ namespace FileShare.Controllers
         private readonly ILogger<HomeController> _logger;
         private FileHelper _fileHelper { get; set; }
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IHostingEnvironment hostingEnvironment)
         {
             _logger = logger;
-            _fileHelper = new FileHelper(context);
+            _fileHelper = new FileHelper(context, hostingEnvironment);
         }
 
         public IActionResult Index()
@@ -24,8 +25,13 @@ namespace FileShare.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Index(FileViewModel file)
         {
+            if (file.FileName == null) 
+            {
+                return View();
+            }
             _fileHelper.Save(file.File.Files[0], User.Identity.Name);
             return View();
         }

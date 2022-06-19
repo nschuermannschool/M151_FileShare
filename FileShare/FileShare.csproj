@@ -22,8 +22,4 @@
     <ProjectReference Include="..\FileShareDataAccessLayer\FileShareDataAccessLayer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Files\" />
-  </ItemGroup>
-
 </Project>

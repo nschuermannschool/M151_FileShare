@@ -2,15 +2,18 @@
 using Microsoft.AspNetCore.Http;
 using File = FileShareDataAccessLayer.Models.File;
 using ApplicationUserFile = FileShareDataAccessLayer.Models.ApplicationUserFile;
+using Microsoft.AspNetCore.Hosting;
 
 namespace FileShareBusinessLayer.Helper
 {
     public class FileHelper
     {
         private readonly ApplicationDbContext _context;
-        public FileHelper(ApplicationDbContext context)
+        private readonly IHostingEnvironment _hostingEnvironment;
+        public FileHelper(ApplicationDbContext context, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public void Save(IFormFile file, string userEmail)
@@ -46,7 +49,13 @@ namespace FileShareBusinessLayer.Helper
 
             _context.Files.Add(dbFile);
 
-            dbFile.FilePath = "Files/" + dbFile.Id + Path.GetExtension(file.FileName);
+            string directory = Path.Combine(_hostingEnvironment.ContentRootPath, "Files") ;
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            dbFile.FilePath = Path.Combine("Files",  dbFile.Id + Path.GetExtension(file.FileName));
             _context.SaveChanges();
 
             var fst = System.IO.File.Create(dbFile.FilePath, (int)file.Length);
