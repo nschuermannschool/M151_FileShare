@@ -32,13 +32,13 @@ namespace FileShareDataAccessLayer.Data
             if (!context.Users.Any(u => u.UserName == "test@test.com"))
             {
                 ApplicationUser user = new ApplicationUser { Email = "test@test.com", UserName = "test@test.com" };
-                await userManager.CreateAsync(user, "123456");
+                await userManager.CreateAsync(user, "aA123+");
             }
 
             if (!context.Users.Any(u => u.UserName == "admin@test.com"))
             {
                 ApplicationUser user = new ApplicationUser { Email = "admin@test.com", UserName = "admin@test.com" };
-                await userManager.CreateAsync(user, "123456");
+                await userManager.CreateAsync(user, "aA123+");
             }
             #endregion
 
@@ -53,16 +53,6 @@ namespace FileShareDataAccessLayer.Data
                 await userManager.AddToRoleAsync(adminUser, Roles.Administrator.ToString());
             }
             #endregion
-
-            context.SaveChanges();
-
-            Models.File file = new Models.File() { FileHash = "TESTHASH", FilePath="PATH", Users = new List<ApplicationUser>() { adminUser } };
-            context.Add(file);
-            
-            context.SaveChanges();
-
-            ApplicationUserFile applicationUserFile = context.ApplicationUserFile.First(x => x.File == file);
-            applicationUserFile.FileName = "Test";
 
             context.SaveChanges();
 
