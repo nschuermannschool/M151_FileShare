@@ -109,5 +109,21 @@ namespace FileShareBusinessLayer.Helper
 
             return mst.ToArray();
         }
+
+        public void DeleteFile(string id, string userEmail)
+        {
+            var user = _context.Users.First(x => x.Email == userEmail);
+            var userFile = _context.ApplicationUserFile.First(a => a.UserId == user.Id && a.FileId.ToString() == id);
+            _context.ApplicationUserFile.Remove(userFile);
+            _context.SaveChanges();
+
+            if(!_context.ApplicationUserFile.Any(f => f.FileId.ToString() == id))
+            {
+                var file = _context.Files.First(f => f.Id.ToString() == id);
+                System.IO.File.Delete(file.FilePath);
+                _context.Files.Remove(file);
+                _context.SaveChanges();
+            }
+        }
     }
 }

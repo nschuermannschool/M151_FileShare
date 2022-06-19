@@ -60,6 +60,12 @@ namespace FileShare.Controllers
             return File(_fileHelper.DownloadFile(id), "application/" + Path.GetExtension(fileName)?.TrimStart('.'), fileName);
         }
 
+        public IActionResult DeleteFile(string id)
+        {
+            _fileHelper.DeleteFile(id, User.Identity.Name);
+            return RedirectToAction("FileList");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
