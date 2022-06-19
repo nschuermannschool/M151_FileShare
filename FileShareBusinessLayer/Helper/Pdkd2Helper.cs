@@ -26,7 +26,7 @@ namespace FileShareBusinessLayer.Helper
 
         public static bool Verify(byte[] value, string savedValue)
         {
-            if (savedValue.Length != 64)
+            if (savedValue.Length != 48)
             {
                 return false;
             }

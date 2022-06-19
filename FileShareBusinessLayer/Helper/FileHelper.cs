@@ -26,7 +26,7 @@ namespace FileShareBusinessLayer.Helper
 
             foreach (var fileFromDb in _context.Files)
             {
-                if(Pdkd2Helper.Verify(mst.ToArray(), fileFromDb.FileHash))
+                if (Pdkd2Helper.Verify(mst.ToArray(), fileFromDb.FileHash))
                 {
                     fileFromDb.Users.Add(user);
                     _context.SaveChanges();
@@ -65,6 +65,25 @@ namespace FileShareBusinessLayer.Helper
             var userFile = _context.ApplicationUserFile.First(u => u.UserId == user.Id && u.FileId == dbFile.Id);
             userFile.FileName = file.FileName;
             _context.SaveChanges();
+        }
+
+        public List<ApplicationUserFile> GetUserFiles(string userEmail)
+        {
+            var user = _context.Users.First(x => x.Email == userEmail);
+            return _context.ApplicationUserFile.Where(f => f.User == user).ToList();
+        }
+
+        public byte[] DownloadFile(string id)
+        {
+            var mst = new MemoryStream();
+
+            var fileFromDb = _context.Files.First(f => f.Id.ToString() == id);
+            using (var st = System.IO.File.Open(fileFromDb.FilePath, FileMode.Open))
+            {
+                st.CopyTo(mst);
+            }
+
+            return mst.ToArray();
         }
     }
 }

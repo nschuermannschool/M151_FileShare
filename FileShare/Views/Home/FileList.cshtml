@@ -1,0 +1,18 @@
+﻿@using FileShare.ViewModels
+@model List<FileViewModel>
+
+<div class="container-fluid">
+    @if (Model.Any())
+    {
+        foreach (var file in Model)
+        {
+            <div class="row">
+                <a asp-action="DownloadFile" asp-route-id="@file.Id" asp-route-fileName="@file.FileName">@file.FileName</a>
+            </div>
+        }
+    }
+    else
+    {
+        <p>You have not uploaded any Files yet.</p>
+    }
+</div>

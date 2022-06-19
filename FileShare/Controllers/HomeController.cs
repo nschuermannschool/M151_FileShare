@@ -2,6 +2,7 @@
 using FileShareBusinessLayer.Helper;
 using FileShareDataAccessLayer.Data;
 using FileShareDataAccessLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
@@ -28,17 +29,35 @@ namespace FileShare.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Index(FileViewModel file)
         {
-            if (file.FileName == null) 
+            if (file.File.Files.Count == 0) 
             {
                 return View();
             }
+
             _fileHelper.Save(file.File.Files[0], User.Identity.Name);
+
             return View();
         }
 
-        public IActionResult Privacy()
+        [Authorize]
+        public IActionResult FileList()
         {
-            return View();
+            var model = new List<FileViewModel>();
+            var files = _fileHelper.GetUserFiles(User.Identity.Name);
+            foreach (var file in files)
+            {
+                model.Add(new FileViewModel
+                {
+                    Id = file.FileId.ToString(),
+                    FileName = file.FileName
+                });
+            }
+            return View(model);
+        }
+
+        public IActionResult DownloadFile(string id, string fileName)
+        {
+            return File(_fileHelper.DownloadFile(id), "application/" + Path.GetExtension(fileName)?.TrimStart('.'), fileName);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
